@@ -327,9 +327,9 @@ This project is licensed under the **MIT License** - see [LICENSE](./LICENSE) fi
 
 ## 📧 Contact & Support
 
-- 📧 **Email:** [your-email@example.com]
-- 🐦 **Twitter:** [@yourusername]
-- 💬 **Discord:** [Your Discord Server]
+- 📧 **Email:** dilevschinikita75@gmail.com
+  
+
 
 ---
 
