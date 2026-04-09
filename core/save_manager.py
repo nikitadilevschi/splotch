@@ -14,6 +14,7 @@ def default_save():
         "completed": {},
         "unlocked_cats": [0, 1],
         "unlocked_lvls": {"0":[0],"1":[0],"2":[0],"3":[0],"4":[0]},
+        "muted": False,
     }
 
 
@@ -26,6 +27,8 @@ def load_save():
                 s["unlocked_cats"] = [0, 1]
             if "unlocked_lvls" not in s:
                 s["unlocked_lvls"] = {"0":[0],"1":[0],"2":[0],"3":[0],"4":[0]}
+            if "muted" not in s:
+                s["muted"] = False
             return s
         except:
             pass

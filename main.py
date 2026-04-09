@@ -10,7 +10,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SW, SH))
-        pygame.display.set_caption("Splotch – Precision Platformer")
+        pygame.display.set_caption("Rage Bait – Precision Platformer")
         self.clock  = pygame.time.Clock()
         self.save   = load_save()
         self.scene  = CategorySelectScene(self)
@@ -23,7 +23,7 @@ class Game:
             self.screen = pygame.display.set_mode((SW, SH), pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode((SW, SH))
-        pygame.display.set_caption("Splotch – Precision Platformer")
+        pygame.display.set_caption("Rage Bait – Precision Platformer")
 
     def go_category_select(self):
         self.scene = CategorySelectScene(self)

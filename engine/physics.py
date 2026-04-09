@@ -22,6 +22,7 @@ class Player:
         self.coyote    = 0.0
         self.jbuf      = 0.0
         self.alive     = True
+        self.jumped    = False  # Flag to track if player just jumped
 
     def handle_input(self, keys):
         left  = keys[pygame.K_LEFT]  or keys[pygame.K_a]
@@ -32,12 +33,14 @@ class Player:
             self.jbuf = JBUF
 
     def update(self, dt, platforms):
+        self.jumped = False  # Reset jump flag at start of frame
         self.vy = min(self.vy + GRAVITY*dt, MAX_FALL)
         self.coyote = max(0, self.coyote - dt)
         self.jbuf   = max(0, self.jbuf   - dt)
 
         if self.jbuf > 0 and (self.on_ground or self.coyote > 0):
             self.vy = JUMP_V
+            self.jumped = True  # Set flag when jump happens
             self.coyote = self.jbuf = 0
 
         self.on_ground = False

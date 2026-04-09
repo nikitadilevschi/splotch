@@ -1,5 +1,5 @@
 {
-  "deaths": 73,
+  "deaths": 84,
   "completed": {
     "0_0": true,
     "0_1": true,
@@ -50,5 +50,6 @@
       1,
       2
     ]
-  }
+  },
+  "muted": true
 }

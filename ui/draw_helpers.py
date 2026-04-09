@@ -512,3 +512,49 @@ def draw_deaths_counter(surf, cx, cy, deaths):
                 pygame.Rect(cx + 37, cy - 8, 5, 5), radius=2)
 
 
+def draw_mute_button(surf, muted=False, x=None, y=None):
+    """Draw a mute button using silence.png image.
+    
+    Args:
+        surf: Pygame surface to draw on
+        muted: Whether sound is muted
+        x: X position (default: left of death counter)
+        y: Y position (default: TOP_H // 2)
+    
+    Returns the button rect for collision detection.
+    """
+    if x is None:
+        x = SW - 150  # Position to the left of death counter
+    if y is None:
+        y = TOP_H // 2 - 20  # Centered in top bar
+    
+    btn_rect = pygame.Rect(x, y, 40, 40)
+    
+    # Draw button background
+    bg_color = (200, 60, 60) if muted else (60, 120, 110)
+    border_color = (255, 100, 100) if muted else (100, 160, 150)
+    
+    pygame.draw.rect(surf, bg_color, btn_rect, border_radius=8)
+    pygame.draw.rect(surf, border_color, btn_rect, 2, border_radius=8)
+    
+    # Load and draw the silence.png image
+    try:
+        import os
+        img_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'images', 'silence.png')
+        if os.path.exists(img_path):
+            img = pygame.image.load(img_path)
+            # Scale image to fit button (leave some padding)
+            img = pygame.transform.scale(img, (28, 28))
+            img_rect = img.get_rect(center=btn_rect.center)
+            surf.blit(img, img_rect)
+    except:
+        # Fallback to text if image loading fails
+        icon_color = WHITE
+        cx, cy = btn_rect.centerx, btn_rect.centery
+        if muted:
+            draw_text(surf, "🔇", 24, icon_color, cx, cy)
+        else:
+            draw_text(surf, "🔊", 24, icon_color, cx, cy)
+    
+    return btn_rect
+

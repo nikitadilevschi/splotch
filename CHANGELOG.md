@@ -1,9 +1,47 @@
 # Changelog
 
-All notable changes to the SPLOTCH project will be documented in this file.
+All notable changes to the RAGE BAIT project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.1.0] - 2026-04-09
+
+### Added
+
+#### Audio & Sound System
+- 🔊 Complete sound system with Pygame mixer integration
+- 🔊 Background music that loops during gameplay and main menu
+- 🔊 Jump sound effect (ascending tone)
+- 🔊 Death sound effect (descending tone)
+- 🔊 Victory/win sound effect (uplifting chord)
+- 🔇 Mute button with persistent state (saved to save.json)
+- 🔇 Sound controls on both main menu and level scenes
+- 🔊 Volume-adjustable sound effects (0.0 to 1.0)
+
+#### UI/UX Improvements
+- 🎨 Mute button with silence.png icon image
+- 🎨 Color-coded mute button (green for unmuted, red for muted)
+- 🎨 Mute button positioned next to death counter on top-right
+- 🎨 Sound state persists between game sessions
+
+#### Branding
+- 🎮 Game rebranded from "Splotch" to "Rage Bait"
+- 🎮 Updated all window titles and in-game displays
+- 🎮 Updated documentation to reflect new branding
+
+### Technical
+- 🔧 New `core/sound_manager.py` module for centralized sound management
+- 🔧 Sound state stored in save data with fallback support
+- 🔧 Graceful degradation when sound files are missing
+- 🔧 Proper jump detection using player.jumped flag for reliable sound triggering
+
+### Documentation
+- 📖 Added SOUND_SETUP.md with sound configuration guide
+- 📖 Added MUTE_BUTTON_README.md with mute button implementation details
+- 📖 Added sound generation scripts for creating placeholder audio
+
+---
 
 ## [1.0.0] - 2026-04-02
 

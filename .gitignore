@@ -139,3 +139,10 @@ backup/
 old/
 temp/
 
+# Audio files (generate with create_sounds_quick.py)
+assets/sounds/*.wav
+
+# Generated assets
+*.pyc
+save.json.bak
+

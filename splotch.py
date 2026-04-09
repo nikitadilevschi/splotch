@@ -1,6 +1,6 @@
 """
-Splotch – Precision Platformer
-================================
+Rage Bait – Precision Platformer
+==================================
 Run instructions:
     pip install pygame
     python main.py
@@ -1806,7 +1806,7 @@ class CategorySelectScene:
         deaths = self.game.save.get('deaths', 0)
 
         # ── Hero title ──
-        draw_text_shadow(surf, "SPLOTCH", 68, WHITE, SW//2, TOP_H + 52)
+        draw_text_shadow(surf, "Rage Bait", 68, WHITE, SW//2, TOP_H + 52)
         draw_text(surf, "How far can you go before you get splotched?",
                   14, TEAL_LIGHT, SW//2, TOP_H + 92, bold=False)
 
@@ -1882,7 +1882,7 @@ class CategorySelectScene:
         # ── Top bar (rendered last, always on top) ──
         pygame.draw.rect(surf, TEAL_DEEP, (0, 0, SW, TOP_H))
         pygame.draw.line(surf, TEAL_MID, (0, TOP_H), (SW, TOP_H), 1)
-        draw_text_shadow(surf, "SPLOTCH", 22, WHITE, SW//2, TOP_H // 2)
+        draw_text_shadow(surf, "RAGE BAIT", 22, WHITE, SW//2, TOP_H // 2)
         draw_splotch_icon(surf, SW - 46, TOP_H // 2, 16, WHITE, deaths)
         _draw_sound_icons(surf, SW - 112, TOP_H // 2)
 
@@ -1893,7 +1893,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SW, SH))
-        pygame.display.set_caption("Splotch – Precision Platformer")
+        pygame.display.set_caption("Rage Bait – Precision Platformer")
         self.clock  = pygame.time.Clock()
         self.save   = load_save()
         self.scene  = CategorySelectScene(self)

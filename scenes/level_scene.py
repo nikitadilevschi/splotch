@@ -9,6 +9,7 @@ from core.constants import (
     RED_FLASH, CAT_NAMES
 )
 from core.save_manager import write_save
+from core.sound_manager import get_sound_manager
 from engine.physics import Player
 from engine.mblock import MBlock, check_saw_collision
 from engine.spike import SpikeObj
@@ -17,7 +18,7 @@ from levels import LEVELS
 from ui.draw_helpers import (
     draw_text, draw_pill_badge, get_font, draw_flag,
     draw_flag_icon, _alpha_rect, draw_shadow_card, draw_deaths_counter,
-    get_category_palette, draw_tile_colored
+    get_category_palette, draw_tile_colored, draw_mute_button
 )
 
 
@@ -26,6 +27,8 @@ class LevelScene:
         self.game   = game
         self.ci, self.li = ci, li
         self.data   = LEVELS[ci][li]
+        self.sound_mgr = get_sound_manager()
+        self.sound_mgr.play_background_music()
         self._build()
         self.flash  = 0.0
         self.hint_t = 5.0
@@ -92,6 +95,7 @@ class LevelScene:
                 prect = player.rect
 
     def _die(self):
+        self.sound_mgr.play_sound('death', volume=0.7)
         self.game.save['deaths'] = self.game.save.get('deaths', 0) + 1
         write_save(self.game.save)
         self.run_deaths += 1
@@ -114,6 +118,13 @@ class LevelScene:
                 self._die()
             if ev.key == pygame.K_ESCAPE:
                 self.game.go_level_select(self.ci)
+        if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+            mx, my = ev.pos
+            # Check mute button
+            if self.mute_btn_rect and self.mute_btn_rect.collidepoint(mx, my):
+                self.sound_mgr.toggle_mute()
+                self.game.save['muted'] = self.sound_mgr.muted
+                write_save(self.game.save)
 
     def update(self, dt):
         if self.win:
@@ -138,6 +149,10 @@ class LevelScene:
         p.update(dt, self._platforms)
 
         pr = p.rect
+        
+        # Detect jump using the player's jumped flag (set in physics.py)
+        if p.jumped:
+            self.sound_mgr.play_sound('jump', volume=0.6)
 
         # Death: fall off screen
         if p.y > OH + 80:
@@ -170,6 +185,7 @@ class LevelScene:
 
         # Win
         if pr.colliderect(self.goal_rect):
+            self.sound_mgr.play_sound('win', volume=0.8)
             self.win = True
             key = f"{self.ci}_{self.li}"
             self.game.save['completed'][key] = True
@@ -292,7 +308,10 @@ class LevelScene:
             else:
                 col, filled = (64, 90, 86), False
             draw_flag_icon(surf, x_flags + li * 18, TOP_H // 2 + 5,
-                           size=9, color=col, filled=filled)
+                           size=10, color=col, filled=filled)
+        
+        # Mute button (top-right)
+        self.mute_btn_rect = draw_mute_button(surf, self.sound_mgr.muted)
 
         total_d = self.game.save.get('deaths', 0)
         draw_deaths_counter(surf, SW - 42, TOP_H // 2, total_d)

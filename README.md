@@ -1,4 +1,4 @@
-# 🎮 SPLOTCH - Precision Platformer Game
+# 🎮 RAGE BAIT - Precision Platformer Game
 
 <div align="center">
 
@@ -6,6 +6,7 @@
 ![Pygame](https://img.shields.io/badge/Pygame-2.0+-green?style=flat-square&logo=pygame)
 ![License](https://img.shields.io/badge/License-MIT-red?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Complete-success?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.1.0-blueviolet?style=flat-square)
 
 A challenging precision platformer game with 5 unique categories and 15 levels of increasing difficulty.
 
@@ -17,7 +18,7 @@ A challenging precision platformer game with 5 unique categories and 15 levels o
 
 ## 🎯 Overview
 
-**SPLOTCH** is a precision platformer game where players must navigate through deadly traps, falling platforms, and rotating saws. Each of the 5 categories presents unique challenges with their own visual theme and mechanics.
+**RAGE BAIT** is a precision platformer game where players must navigate through deadly traps, falling platforms, and rotating saws. Each of the 5 categories presents unique challenges with their own visual theme and mechanics.
 
 ### ✨ Key Features
 
@@ -34,6 +35,8 @@ A challenging precision platformer game with 5 unique categories and 15 levels o
 - 🏆 **Achievement Tracking** - Death counter and level completion badges
 - 🎯 **Responsive Controls** - Smooth, precise platforming mechanics
 - 🎭 **Polished UI** - Beautiful menus and visual feedback
+- 🔊 **Sound System** - Background music, jump, death, and victory sounds
+- 🔇 **Mute Button** - Easy toggle to mute/unmute all sounds (persistent preference)
 
 ---
 
@@ -58,8 +61,8 @@ Main Menu              Level Select           Gameplay
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/splotch.git
-cd splotch
+git clone https://github.com/yourusername/rage-bait.git
+cd rage-bait
 ```
 
 2. **Install dependencies:**
@@ -71,6 +74,37 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+
+---
+
+## 🔊 Audio & Sound System
+
+Rage Bait includes a complete sound system with background music and sound effects:
+
+- **Background Music** - Loops continuously on main menu and during gameplay
+- **Jump Sound** - Plays when you jump (satisfying ascending tone)
+- **Death Sound** - Plays when you die (ominous descending tone)
+- **Victory Sound** - Plays when you reach the flag (uplifting chord)
+- **Mute Button** - Toggle mute with one click (green 🔊 / red 🔇)
+
+### Sound Setup
+
+Audio files are located in `assets/sounds/`:
+
+```
+assets/sounds/
+├── jump.wav              # Jump sound effect
+├── death.wav             # Death sound effect
+├── win.wav               # Victory sound effect
+└── background_music.wav  # Looping background music
+```
+
+To generate placeholder audio files, run:
+```bash
+python create_sounds_quick.py
+```
+
+For more details, see [SOUND_SETUP.md](./SOUND_SETUP.md)
 
 ---
 
@@ -143,6 +177,7 @@ splotch/
 ├── core/                          # Core functionality
 │   ├── constants.py              # Colors, dimensions, palettes
 │   ├── save_manager.py           # Save/load system
+│   ├── sound_manager.py          # Audio system
 │   └── __init__.py
 ├── engine/                        # Game engine
 │   ├── physics.py                # Player physics & collision
@@ -168,8 +203,16 @@ splotch/
 │   ├── draw_helpers.py           # Rendering functions
 │   ├── hud.py                    # HUD elements
 │   └── __init__.py
+├── assets/                        # Game assets
+│   ├── images/
+│   │   └── silence.png           # Mute button icon
+│   └── sounds/
+│       ├── jump.wav              # Jump sound effect
+│       ├── death.wav             # Death sound effect
+│       ├── win.wav               # Victory sound effect
+│       └── background_music.wav  # Looping background music
 ├── main.py                        # Entry point
-├── splotch.py                     # Main game class
+├── splotch.py                     # Main game class (legacy)
 ├── requirements.txt               # Dependencies
 └── README.md                      # This file
 ```
@@ -261,11 +304,15 @@ This project is licensed under the **MIT License** - see [LICENSE](./LICENSE) fi
 
 ---
 
-## 🎯 Roadmap
+## 🔜 Roadmap
+
+### Completed Features ✅
+
+- [x] Sound and music system
+- [x] Mute button with persistent state
 
 ### Future Enhancements
 
-- [ ] Sound and music system
 - [ ] Particle effects
 - [ ] Level editor
 - [ ] Online leaderboards
@@ -298,9 +345,9 @@ This project is licensed under the **MIT License** - see [LICENSE](./LICENSE) fi
 
 ### Made with ❤️ in Python
 
-⭐ **If you enjoy Splotch, please consider giving it a star!** ⭐
+⭐ **If you enjoy Rage Bait, please consider giving it a star!** ⭐
 
-[Back to Top](#-splotch---precision-platformer-game)
+[Back to Top](#-rage-bait---precision-platformer-game)
 
 </div>
 

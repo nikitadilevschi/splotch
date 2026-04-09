@@ -9,19 +9,28 @@ from core.constants import (
     SW, SH, TOP_H, TEAL_DEEP, TEAL_MID, WHITE, GREY, BLACK, TEAL_LIGHT,
     CAT_NAMES, CAT_COLORS
 )
+from core.sound_manager import get_sound_manager
+from core.save_manager import write_save
 from ui.draw_helpers import (
     draw_text_shadow, draw_text, draw_modern_card,
     draw_lock, draw_category_icon, draw_pill_badge, rrect,
     draw_deaths_counter, draw_main_menu_background,
-    get_category_palette, draw_flag_icon
+    get_category_palette, draw_flag_icon, draw_mute_button
 )
 
 
 class CategorySelectScene:
     def __init__(self, game):
         self.game  = game
+        self.sound_mgr = get_sound_manager()
+        # Ensure background music is playing on main menu
+        if not self.sound_mgr.music_playing:
+            self.sound_mgr.play_background_music()
+        # Sync mute state from save
+        self.sound_mgr.set_muted(self.game.save.get('muted', False))
         self.hover = -1
         self.reset_confirm = False
+        self.mute_btn_rect = None
 
     def _cards(self):
         cw,ch = 162, 290
@@ -51,6 +60,14 @@ class CategorySelectScene:
                     self.hover = i
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button==1:
             mx,my = ev.pos
+            
+            # Check mute button
+            if self.mute_btn_rect and self.mute_btn_rect.collidepoint(mx, my):
+                self.sound_mgr.toggle_mute()
+                self.game.save['muted'] = self.sound_mgr.muted
+                write_save(self.game.save)
+                return
+            
             for i,r in enumerate(self._cards()):
                 if r.collidepoint(ev.pos):
                     if i in self.game.save['unlocked_cats']:
@@ -73,7 +90,7 @@ class CategorySelectScene:
         deaths = self.game.save.get('deaths', 0)
 
         # ── Hero title ──
-        draw_text_shadow(surf, "SPLOTCH", 68, WHITE, SW//2, TOP_H + 52)
+        draw_text_shadow(surf, "RAGE BAIT", 68, WHITE, SW//2, TOP_H + 52)
         draw_text(surf, "How far can you go before you get splotched?",
                   14, TEAL_LIGHT, SW//2, TOP_H + 92, bold=False)
 
@@ -153,7 +170,8 @@ class CategorySelectScene:
         # ── Top bar (rendered last, always on top) ──
         pygame.draw.rect(surf, TEAL_DEEP, (0, 0, SW, TOP_H))
         pygame.draw.line(surf, TEAL_MID, (0, TOP_H), (SW, TOP_H), 1)
-        draw_text_shadow(surf, "SPLOTCH", 22, WHITE, SW//2, TOP_H // 2)
+        draw_text_shadow(surf, "RAGE BAIT", 22, WHITE, SW//2, TOP_H // 2)
         draw_deaths_counter(surf, SW - 42, TOP_H // 2, deaths)
+        self.mute_btn_rect = draw_mute_button(surf, self.sound_mgr.muted)
 
 
