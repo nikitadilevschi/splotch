@@ -61,8 +61,8 @@ Main Menu              Level Select           Gameplay
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/rage-bait.git
-cd rage-bait
+git clone https://github.com/yourusername/splotch.git
+cd splotch
 ```
 
 2. **Install dependencies:**

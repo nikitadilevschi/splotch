@@ -218,7 +218,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to contribute to this project.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on how to contribute to this project.
 
 ---
 
@@ -232,7 +232,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to contribute to 
 
 ## License
 
-This project is licensed under the MIT License - see [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License - see [LICENSE](../LICENSE) file for details.
 
 ---
 
