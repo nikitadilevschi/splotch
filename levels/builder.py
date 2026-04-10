@@ -38,6 +38,6 @@ def _build_trap(td):
     if kind == 'spike':
         return SpikeObj(td['x'], td['y'],
                         td.get('w', 32), td.get('h', 14),
-                        td.get('steps', []), s_obj)
+                        td.get('steps', []), s_obj, td.get('dir', 'up'))
     return None
 

@@ -32,14 +32,16 @@ class Player:
         if jump:
             self.jbuf = JBUF
 
-    def update(self, dt, platforms):
+    def update(self, dt, platforms, custom_jump_v=None):
         self.jumped = False  # Reset jump flag at start of frame
         self.vy = min(self.vy + GRAVITY*dt, MAX_FALL)
         self.coyote = max(0, self.coyote - dt)
         self.jbuf   = max(0, self.jbuf   - dt)
 
         if self.jbuf > 0 and (self.on_ground or self.coyote > 0):
-            self.vy = JUMP_V
+            # Use custom jump velocity if provided (for boost tiles), otherwise use default
+            jump_velocity = custom_jump_v if custom_jump_v is not None else JUMP_V
+            self.vy = jump_velocity
             self.jumped = True  # Set flag when jump happens
             self.coyote = self.jbuf = 0
 

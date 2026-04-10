@@ -44,13 +44,15 @@ COYOTE   = 0.10
 JBUF     = 0.10
 
 # Category names and colors
-CAT_NAMES  = ["Gaps", "Spikes", "Push", "Platforms", "Saws"]
+CAT_NAMES  = ["Gaps", "Spikes", "Push", "Platforms", "Saws", "Controls", "Teleporters"]
 CAT_COLORS = [
     ( 70, 180, 168),
     (185,  75,  75),
     ( 75, 130, 185),
     (125,  75, 185),
     (185, 145,  50),
+    ( 50, 180, 100),  # Controls - Green
+    (180,  80, 180),  # Teleporters - Magenta/Purple
 ]
 
 # Category-specific color palettes for level design
@@ -94,6 +96,22 @@ CAT_PALETTES = [
         'dark':       (140, 110,  30),
         'light':      (220, 175,  80),
         'accent':     (240, 200, 110),
+        'spike':      (160, 160, 160),
+    },
+    # Controls - Green
+    {
+        'primary':    ( 50, 180, 100),
+        'dark':       ( 30, 130,  70),
+        'light':      ( 80, 210, 130),
+        'accent':     (120, 240, 160),
+        'spike':      (160, 160, 160),
+    },
+    # Teleporters - Magenta/Purple
+    {
+        'primary':    (180,  80, 180),
+        'dark':       (130,  50, 130),
+        'light':      (220, 120, 220),
+        'accent':     (240, 160, 240),
         'spike':      (160, 160, 160),
     },
 ]

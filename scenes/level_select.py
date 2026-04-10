@@ -10,7 +10,7 @@ from core.constants import (
 )
 from ui.draw_helpers import (
     draw_text_shadow, draw_text, draw_modern_card, draw_lock,
-    draw_pill_badge, draw_bg_dots, draw_deaths_counter, _alpha_rect,
+    draw_pill_badge, draw_bg_dots, _alpha_rect,
     get_font, draw_flag_icon, get_category_palette
 )
 
@@ -116,8 +116,6 @@ class LevelSelectScene:
         _draw_exit_icon(surf, 26, TOP_H // 2, palette)
         draw_text(surf, "Back", 13, light_color, 64, TOP_H // 2, bold=False)
         draw_text_shadow(surf, CAT_NAMES[self.ci], 22, WHITE, SW//2, TOP_H // 2)
-        draw_deaths_counter(surf, SW - 42, TOP_H // 2,
-                            self.game.save.get('deaths', 0))
 
 
 def _draw_exit_icon(surf, cx, cy, palette=None):

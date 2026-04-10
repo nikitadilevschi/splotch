@@ -35,6 +35,16 @@ class LevelScene:
         self.win    = False
         self.win_t  = 0.0
         self.run_deaths = 0
+        
+        # Reversed tiles list (for Controls category)
+        self.reversed_tiles = self.data.get('reversed_tiles', [])
+        
+        # Track current platform for persistent control reversal
+        self.current_reversed_tile = None
+
+        # Jump boost tiles list
+        self.jump_boost_tiles = self.data.get('jump_boost_tiles', [])
+        self.current_jump_boost = None
 
     def _build(self):
         d = self.data
@@ -71,6 +81,29 @@ class LevelScene:
             if r.top < OH and r.bottom > 0 and r.left < OW and r.right > 0:
                 self._platforms.append(r)
 
+    def _is_on_reversed_tile(self, player_rect):
+        """Check if player is standing on a reversed control tile. Returns the tile or None."""
+        for rev_tile in self.reversed_tiles:
+            # Check if player is standing on top of this reversed tile
+            if (player_rect.bottom >= rev_tile.top - 4 and
+                player_rect.bottom <= rev_tile.top + 4 and
+                player_rect.right > rev_tile.left and
+                player_rect.left < rev_tile.right):
+                return rev_tile
+        return None
+
+    def _get_jump_boost(self, player_rect):
+        """Check if player is standing on a jump boost tile. Returns the boost velocity or None."""
+        for boost_tile in self.jump_boost_tiles:
+            boost_rect = boost_tile['rect']
+            # Check if player is standing on top of this boost tile
+            if (player_rect.bottom >= boost_rect.top - 4 and
+                player_rect.bottom <= boost_rect.top + 4 and
+                player_rect.right > boost_rect.left and
+                player_rect.left < boost_rect.right):
+                return boost_tile.get('jump_v', None)
+        return None
+
     def _carry_player_with_moving_blocks(self, player, prect):
         for mb in self._mblocks:
             # Skip saws - they don't carry the player
@@ -97,6 +130,11 @@ class LevelScene:
     def _die(self):
         self.sound_mgr.play_sound('death', volume=0.7)
         self.game.save['deaths'] = self.game.save.get('deaths', 0) + 1
+        
+        # Track per-level deaths using category and level indices
+        level_key = f"{self.ci}_{self.li}"
+        self.game.save['level_deaths'][level_key] = self.game.save['level_deaths'].get(level_key, 0) + 1
+        
         write_save(self.game.save)
         self.run_deaths += 1
         self.flash = 0.45
@@ -140,13 +178,41 @@ class LevelScene:
         pr    = p.rect
 
         p.handle_input(keys)
+        
+        # Check if player is standing on a reversed control tile
+        tile_under_player = self._is_on_reversed_tile(pr)
+        
+        if tile_under_player:
+            # Player is standing on a reversed tile - set it as current
+            self.current_reversed_tile = tile_under_player
+        elif self.current_reversed_tile is None:
+            # Player is not on any reversed tile and wasn't on one before
+            pass
+        # else: Player is in the air (jumping) but was on a reversed tile - keep reversing
+        
+        # Apply reversed controls if player is on a reversed tile (or jumping from one)
+        if self.current_reversed_tile is not None:
+            p.vx = -p.vx
+        
+        # Clear current reversed tile if player landed on a different platform
+        if tile_under_player is None and p.vy >= 0:
+            # Player is falling/idle and not on any reversed tile
+            # Check if they're actually on a regular platform
+            pr_below = pygame.Rect(pr.x, pr.y + 4, pr.w, pr.h)
+            if any(pr_below.colliderect(plat) for plat in self._platforms):
+                # Player landed on a non-reversed platform
+                self.current_reversed_tile = None
+        
         for mb in self._mblocks:
             mb.update(dt, pr)
         for sp in self._spikes:
             sp.update(dt, pr)
         self._rebuild_plats()
         self._carry_player_with_moving_blocks(p, pr)
-        p.update(dt, self._platforms)
+        
+        # Check if player is on a jump boost tile
+        jump_boost_value = self._get_jump_boost(pr)
+        p.update(dt, self._platforms, custom_jump_v=jump_boost_value)
 
         pr = p.rect
         
@@ -197,7 +263,7 @@ class LevelScene:
                 ul[ck].append(self.li+1)
             if all(self.game.save['completed'].get(f"{self.ci}_{x}", False)
                    for x in range(3)):
-                if self.ci+1 < 5:
+                if self.ci+1 < 7:  # Updated to support 7 categories
                     if (self.ci+1) not in self.game.save['unlocked_cats']:
                         self.game.save['unlocked_cats'].append(self.ci+1)
                     nk = str(self.ci+1)
@@ -313,8 +379,10 @@ class LevelScene:
         # Mute button (top-right)
         self.mute_btn_rect = draw_mute_button(surf, self.sound_mgr.muted)
 
-        total_d = self.game.save.get('deaths', 0)
-        draw_deaths_counter(surf, SW - 42, TOP_H // 2, total_d)
+        # Display per-level death counter for current level
+        level_key = f"{self.ci}_{self.li}"
+        level_deaths = self.game.save['level_deaths'].get(level_key, 0)
+        draw_deaths_counter(surf, SW - 42, TOP_H // 2, level_deaths)
 
         # ── Hint toast (bottom pill) ──
         if self.hint_t > 0:

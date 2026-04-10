@@ -6,9 +6,9 @@
 ![Pygame](https://img.shields.io/badge/Pygame-2.0+-green?style=flat-square&logo=pygame)
 ![License](https://img.shields.io/badge/License-MIT-red?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Complete-success?style=flat-square)
-![Version](https://img.shields.io/badge/Version-1.1.0-blueviolet?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.2.0-blueviolet?style=flat-square)
 
-A challenging precision platformer game with 5 unique categories and 15 levels of increasing difficulty.
+A challenging precision platformer game with 6 unique categories and 18 levels of increasing difficulty.
 
 [🎮 Play](#features) • [📖 Docs](#documentation) • [🚀 Installation](#installation) • [🤝 Contributing](#contributing)
 
@@ -18,18 +18,19 @@ A challenging precision platformer game with 5 unique categories and 15 levels o
 
 ## 🎯 Overview
 
-**RAGE BAIT** is a precision platformer game where players must navigate through deadly traps, falling platforms, and rotating saws. Each of the 5 categories presents unique challenges with their own visual theme and mechanics.
+**RAGE BAIT** is a precision platformer game where players must navigate through deadly traps, falling platforms, and rotating saws. Each of the 6 categories presents unique challenges with their own visual theme and mechanics.
 
 ### ✨ Key Features
 
-- 🎨 **5 Unique Categories** with distinct visual themes and color palettes
+- 🎨 **6 Unique Categories** with distinct visual themes and color palettes
   - 🌊 **GAPS** - Platforms that collapse when you jump on them
   - 🔴 **SPIKES** - Hidden guillotines that pop up when you approach
   - 💨 **PUSH** - Mobile blocks that push you across gaps
   - 📦 **PLATFORMS** - Vertical platforms that crush you if you get caught
   - 🔪 **SAWS** - Rotating blades that move along platforms
+  - 🎮 **CONTROLS** - Tutorial levels teaching game mechanics
 
-- 🎮 **15 Challenging Levels** - 3 levels per category with progressive difficulty
+- 🎮 **18 Challenging Levels** - 3 levels per category with progressive difficulty
 - 🎨 **Dynamic Color System** - Each category has its own cohesive visual theme
 - 💾 **Persistent Save System** - Your progress is automatically saved
 - 🏆 **Achievement Tracking** - Death counter and level completion badges
@@ -44,8 +45,8 @@ A challenging precision platformer game with 5 unique categories and 15 levels o
 
 ```
 Main Menu              Level Select           Gameplay
-[Teal Theme]          [Category Colors]       [Dynamic Colors]
-5 Categories          3 Levels Each           Real-time Physics
+[6 Categories]        [Category Colors]       [Dynamic Colors]
+18 Total Levels       3 Levels Each           Real-time Physics
 ```
 
 ---

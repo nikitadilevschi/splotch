@@ -118,6 +118,63 @@ def draw_spike_colored(surf, cx, bot_y, color):
     pygame.draw.polygon(surf, dark_color, pts, 1)
 
 
+def draw_spike_down(surf, cx, top_y):
+    """Downward-pointing spike."""
+    hw = 11
+    h = 16
+    pts = [(cx, top_y + h), (cx - hw, top_y), (cx + hw, top_y)]
+    pygame.draw.polygon(surf, (180, 180, 180), pts)
+    pygame.draw.polygon(surf, (80, 80, 80), pts, 1)
+
+
+def draw_spike_down_colored(surf, cx, top_y, color):
+    """Downward-pointing spike with custom color."""
+    hw = 11
+    h = 16
+    pts = [(cx, top_y + h), (cx - hw, top_y), (cx + hw, top_y)]
+    dark_color = tuple(max(0, c - 100) for c in color)
+    pygame.draw.polygon(surf, color, pts)
+    pygame.draw.polygon(surf, dark_color, pts, 1)
+
+
+def draw_spike_left(surf, right_x, cy):
+    """Left-pointing spike."""
+    hw = 11
+    h = 11
+    pts = [(right_x - h, cy), (right_x, cy - hw), (right_x, cy + hw)]
+    pygame.draw.polygon(surf, (180, 180, 180), pts)
+    pygame.draw.polygon(surf, (80, 80, 80), pts, 1)
+
+
+def draw_spike_left_colored(surf, right_x, cy, color):
+    """Left-pointing spike with custom color."""
+    hw = 11
+    h = 11
+    pts = [(right_x - h, cy), (right_x, cy - hw), (right_x, cy + hw)]
+    dark_color = tuple(max(0, c - 100) for c in color)
+    pygame.draw.polygon(surf, color, pts)
+    pygame.draw.polygon(surf, dark_color, pts, 1)
+
+
+def draw_spike_right(surf, left_x, cy):
+    """Right-pointing spike."""
+    hw = 11
+    h = 11
+    pts = [(left_x + h, cy), (left_x, cy - hw), (left_x, cy + hw)]
+    pygame.draw.polygon(surf, (180, 180, 180), pts)
+    pygame.draw.polygon(surf, (80, 80, 80), pts, 1)
+
+
+def draw_spike_right_colored(surf, left_x, cy, color):
+    """Right-pointing spike with custom color."""
+    hw = 11
+    h = 11
+    pts = [(left_x + h, cy), (left_x, cy - hw), (left_x, cy + hw)]
+    dark_color = tuple(max(0, c - 100) for c in color)
+    pygame.draw.polygon(surf, color, pts)
+    pygame.draw.polygon(surf, dark_color, pts, 1)
+
+
 def get_saw_blade_radius(rect):
     """Return the radius of the saw blade for collision detection."""
     return min(rect.width, rect.height) // 2 - 4
@@ -531,8 +588,13 @@ def draw_mute_button(surf, muted=False, x=None, y=None):
     btn_rect = pygame.Rect(x, y, 40, 40)
     
     # Draw button background
-    bg_color = (200, 60, 60) if muted else (60, 120, 110)
-    border_color = (255, 100, 100) if muted else (100, 160, 150)
+    # Green when unmuted, Red when muted
+    if muted:
+        bg_color = (200, 60, 60)
+        border_color = (255, 100, 100)
+    else:
+        bg_color = (50, 180, 100)      # Fresh green when unmuted
+        border_color = (100, 220, 150)  # Bright green border
     
     pygame.draw.rect(surf, bg_color, btn_rect, border_radius=8)
     pygame.draw.rect(surf, border_color, btn_rect, 2, border_radius=8)

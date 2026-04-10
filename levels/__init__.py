@@ -7,6 +7,8 @@ from levels.spikes import SPIKES_L1, SPIKES_L2, SPIKES_L3
 from levels.push import PUSH_L1, PUSH_L2, PUSH_L3
 from levels.platforms import PLATFORMS_L1, PLATFORMS_L2, PLATFORMS_L3
 from levels.saws import SAWS_L1, SAWS_L2, SAWS_L3
+from levels.controls import CONTROLS_L1, CONTROLS_L2, CONTROLS_L3
+from levels.teleporters import TELEPORTERS_L1, TELEPORTERS_L2, TELEPORTERS_L3
 from core.constants import CAT_NAMES, CAT_COLORS
 
 LEVELS = [
@@ -15,6 +17,8 @@ LEVELS = [
     [PUSH_L1,      PUSH_L2,      PUSH_L3],
     [PLATFORMS_L1, PLATFORMS_L2, PLATFORMS_L3],
     [SAWS_L1,      SAWS_L2,      SAWS_L3],
+    [CONTROLS_L1,  CONTROLS_L2,  CONTROLS_L3],
+    [TELEPORTERS_L1, TELEPORTERS_L2, TELEPORTERS_L3],
 ]
 
 __all__ = ['LEVELS', 'CAT_NAMES', 'CAT_COLORS']
