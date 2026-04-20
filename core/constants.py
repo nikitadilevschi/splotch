@@ -1,5 +1,9 @@
 """
 Game constants and palette colours.
+
+Presentation notes:
+- This module is the shared contract for screen layout, physics tuning, and visual identity.
+- Scene and UI modules depend on these values to stay consistent across all categories.
 """
 
 # Window size and layout
@@ -44,6 +48,7 @@ COYOTE   = 0.10
 JBUF     = 0.10
 
 # Category names and colors
+# CAT_NAMES drives labels/navigation; CAT_COLORS is used mainly for category cards.
 CAT_NAMES  = ["Gaps", "Spikes", "Push", "Platforms", "Saws", "Controls", "Teleporters"]
 CAT_COLORS = [
     ( 70, 180, 168),
@@ -57,6 +62,7 @@ CAT_COLORS = [
 
 # Category-specific color palettes for level design
 # Each palette includes: primary_color, dark_variant, light_variant, accent_color, spike_color
+# CAT_PALETTES is the main theming source used in gameplay scenes and UI drawing helpers.
 CAT_PALETTES = [
     # Gaps - Teal/Cyan
     {

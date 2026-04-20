@@ -1,5 +1,9 @@
 """
 Category selection scene.
+
+Presentation notes:
+- This is the game's main menu and first scene users interact with.
+- It combines navigation (category unlocks), progress summary, and global controls (mute/reset).
 """
 
 import pygame
@@ -21,6 +25,7 @@ from ui.draw_helpers import (
 
 class CategorySelectScene:
     def __init__(self, game):
+        """Initialize main menu state, audio sync, and card scrolling variables."""
         self.game  = game
         self.sound_mgr = get_sound_manager()
         # Ensure background music is playing on main menu
@@ -54,9 +59,11 @@ class CategorySelectScene:
         return cards
 
     def _reset_btn(self):
+        """Return the reset-save button rect used for drawing and hit testing."""
         return pygame.Rect(SW//2-85, SH-80, 170, 32)
 
     def handle_event(self, ev):
+        """Handle keyboard/mouse input for navigation, mute, and save reset."""
         if ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_ESCAPE:
                 pygame.quit()
@@ -118,9 +125,11 @@ class CategorySelectScene:
                 self.reset_confirm = False
 
     def update(self, dt):
+        """No per-frame simulation needed for this static menu scene."""
         pass
 
     def draw(self, surf):
+        """Render category cards, progress indicators, and top-bar controls."""
         draw_main_menu_background(surf)
 
         # ── Hero title ──

@@ -1,5 +1,9 @@
 """
 Level gameplay scene.
+
+Presentation notes:
+- This is the core runtime scene: input, physics, hazards, win/death, and HUD all meet here.
+- Build/update/draw are intentionally separated to keep gameplay deterministic and explainable.
 """
 
 import pygame
@@ -13,17 +17,20 @@ from core.sound_manager import get_sound_manager
 from engine.physics import Player
 from engine.mblock import MBlock, check_saw_collision
 from engine.spike import SpikeObj
+from engine.teleporter import Teleporter
+from engine.sensor import Sensor
 from levels.builder import tiles_to_rects, _build_trap
 from levels import LEVELS
 from ui.draw_helpers import (
     draw_text, draw_pill_badge, get_font, draw_flag,
     draw_flag_icon, _alpha_rect, draw_shadow_card, draw_deaths_counter,
-    get_category_palette, draw_tile_colored, draw_mute_button
+    get_category_palette, draw_tile_colored, draw_mute_button, draw_teleporter
 )
 
 
 class LevelScene:
     def __init__(self, game, ci, li):
+        """Initialize one gameplay level scene from category/level indices."""
         self.game   = game
         self.ci, self.li = ci, li
         self.data   = LEVELS[ci][li]
@@ -47,16 +54,28 @@ class LevelScene:
         self.current_jump_boost = None
 
     def _build(self):
+        """Build player, goal, traps, and optional goal-trigger sensor from level data."""
         d = self.data
         self._static_plats = tiles_to_rects(d['tiles'])
         px, py = d['player']
         self.player = Player(px, py)
         gx, gy = d['goal']
-        self.gx, self.gy = gx, gy
-        self.goal_rect = pygame.Rect(gx-8, gy-48, 22, 48)
+        self._initial_goal = (gx, gy)
+        self._set_goal(gx, gy)
+
+        self._goal_sensor = None
+        self._goal_trigger_target = None
+        self._goal_trigger_fired = False
+        goal_trigger = d.get('goal_trigger')
+        if goal_trigger:
+            sx, sy, sw, sh = goal_trigger['sensor']
+            self._goal_sensor = Sensor(sx, sy, sw, sh)
+            tx, ty = goal_trigger.get('target', d['player'])
+            self._goal_trigger_target = (tx, ty)
 
         self._mblocks = []
         self._spikes  = []
+        self._teleporters = []
         for td in d.get('traps', []):
             obj = _build_trap(td)
             if obj is None:
@@ -65,10 +84,18 @@ class LevelScene:
                 self._mblocks.append(obj)
             if isinstance(obj, SpikeObj):
                 self._spikes.append(obj)
+            if isinstance(obj, Teleporter):
+                self._teleporters.append(obj)
 
         self._rebuild_plats()
 
+    def _set_goal(self, gx, gy):
+        """Set goal world position and rebuild its collision rect."""
+        self.gx, self.gy = gx, gy
+        self.goal_rect = pygame.Rect(gx-8, gy-48, 22, 48)
+
     def _rebuild_plats(self):
+        """Recompute active solid platforms (static tiles + in-bounds moving blocks)."""
         self._platforms = list(self._static_plats)
         for mb in self._mblocks:
             # Skip saws - they only have blade collision, not platform collision
@@ -105,6 +132,7 @@ class LevelScene:
         return None
 
     def _carry_player_with_moving_blocks(self, player, prect):
+        """Move player by block delta when standing on top of a moving platform."""
         for mb in self._mblocks:
             # Skip saws - they don't carry the player
             if mb.is_saw:
@@ -128,6 +156,7 @@ class LevelScene:
                 prect = player.rect
 
     def _die(self):
+        """Handle death: play effects, increment stats, and reset entities to spawn state."""
         self.sound_mgr.play_sound('death', volume=0.7)
         self.game.save['deaths'] = self.game.save.get('deaths', 0) + 1
         
@@ -148,9 +177,16 @@ class LevelScene:
             mb.reset()
         for sp in self._spikes:
             sp.reset()
+        for tel in self._teleporters:
+            tel.reset()
+        self._set_goal(*self._initial_goal)
+        if self._goal_sensor is not None:
+            self._goal_sensor.reset()
+        self._goal_trigger_fired = False
         self._rebuild_plats()
 
     def handle_event(self, ev):
+        """Handle level-local input: restart, back navigation, and mute toggling."""
         if ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_r:
                 self._die()
@@ -165,6 +201,7 @@ class LevelScene:
                 write_save(self.game.save)
 
     def update(self, dt):
+        """Advance one gameplay frame: input, hazards, physics, death/win checks."""
         if self.win:
             self.win_t += dt
             if self.win_t > 2.0:
@@ -207,12 +244,15 @@ class LevelScene:
             mb.update(dt, pr)
         for sp in self._spikes:
             sp.update(dt, pr)
+        for tel in self._teleporters:
+            tel.update(dt, pr)
         self._rebuild_plats()
         self._carry_player_with_moving_blocks(p, pr)
         
         # Check if player is on a jump boost tile
         jump_boost_value = self._get_jump_boost(pr)
-        p.update(dt, self._platforms, custom_jump_v=jump_boost_value)
+        level_max_fall = self.data.get('max_fall', None)
+        p.update(dt, self._platforms, custom_jump_v=jump_boost_value, max_fall=level_max_fall)
 
         pr = p.rect
         
@@ -229,11 +269,22 @@ class LevelScene:
             if pr.colliderect(sp.kill_rect()):
                 self._die()
                 return
+        # Teleporter activation
+        for tel in self._teleporters:
+            if tel.check_collision(pr):
+                tel.teleport(p)
+                pr = p.rect  # Update rect after teleportation
         # Death: saw hazard (only when touching the actual saw blade, not the platform)
         for mb in self._mblocks:
             if mb.is_saw and check_saw_collision(pr, mb.rect):
                 self._die()
                 return
+
+        # Optional level-specific sensor that can relocate the goal once.
+        if self._goal_sensor and (not self._goal_trigger_fired) and self._goal_sensor.check(pr):
+            self._set_goal(*self._goal_trigger_target)
+            self._goal_trigger_fired = True
+
         # Death: crushed by moving block
         for mb in self._mblocks:
             if mb.is_saw:
@@ -272,8 +323,10 @@ class LevelScene:
             write_save(self.game.save)
 
     def draw(self, surf):
+        """Render world, entities, HUD, and overlays using the category palette."""
         ox, oy = OX, OY
 
+        # Draw order matters: world first, then entities, then feedback overlays, then HUD/top-bar.
         # Get category-specific palette
         palette = get_category_palette(self.ci)
         tile_color = palette['dark']
@@ -298,6 +351,12 @@ class LevelScene:
         # ── Spikes ──
         for sp in self._spikes:
             sp.draw(surf, ox, oy, palette)
+
+        # ── Teleporters ──
+        for tel in self._teleporters:
+            draw_teleporter(surf, tel.x + ox, tel.y + oy, radius=tel.w//2, 
+                          rotation=tel.rotation, color_light=palette['light'], 
+                          color_dark=palette['primary'])
 
         # ── Flag / Goal ──
         draw_flag(surf, self.gx + ox, self.gy + oy)

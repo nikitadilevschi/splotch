@@ -9,6 +9,7 @@ from core.constants import SAVE_F
 
 
 def default_save():
+    """Return a fresh save payload with defaults for all known systems."""
     return {
         "deaths": 0,
         "level_deaths": {},  # Per-level death tracking: "category_level" -> count
@@ -20,6 +21,7 @@ def default_save():
 
 
 def load_save():
+    """Load save.json if present and backfill missing keys for compatibility."""
     if os.path.exists(SAVE_F):
         try:
             with open(SAVE_F) as f:
@@ -42,6 +44,7 @@ def load_save():
 
 
 def write_save(s):
+    """Persist the provided save dictionary to disk with stable formatting."""
     with open(SAVE_F, 'w') as f:
         json.dump(s, f, indent=2)
 

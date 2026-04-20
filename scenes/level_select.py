@@ -1,5 +1,9 @@
 """
 Level selection scene.
+
+Presentation notes:
+- This scene is the transition between menu navigation and gameplay.
+- It visualizes unlock state, completion state, and per-category theming.
 """
 
 import pygame
@@ -17,11 +21,13 @@ from ui.draw_helpers import (
 
 class LevelSelectScene:
     def __init__(self, game, ci):
+        """Initialize level-select state for one category index."""
         self.game = game
         self.ci   = ci
         self.hover = -1
 
     def _btns(self):
+        """Return the three level-card button rects centered on screen."""
         bw, bh = 220, 168
         gap    = 28
         total  = 3*bw + 2*gap
@@ -30,6 +36,7 @@ class LevelSelectScene:
         return [pygame.Rect(x0+i*(bw+gap), y0, bw, bh) for i in range(3)]
 
     def handle_event(self, ev):
+        """Handle level card hover/click and back navigation."""
         if ev.type == pygame.KEYDOWN and ev.key == pygame.K_ESCAPE:
             self.game.go_category_select()
         if ev.type == pygame.MOUSEMOTION:
@@ -44,9 +51,11 @@ class LevelSelectScene:
                     self.game.go_level(self.ci, i)
 
     def update(self, dt):
+        """No animated simulation in this scene; kept for scene interface parity."""
         pass
 
     def draw(self, surf):
+        """Render themed level cards with locked/done/play states."""
         # Get category palette for theming
         palette = get_category_palette(self.ci)
         cc = palette['primary']

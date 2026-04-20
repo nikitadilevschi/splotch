@@ -1,5 +1,9 @@
 """
 Drawing and UI helper functions.
+
+Presentation notes:
+- Centralized rendering helpers keep scenes focused on logic instead of drawing details.
+- Functions are grouped by purpose: text/layout, world objects, icons, cards, and HUD effects.
 """
 
 import pygame
@@ -24,6 +28,7 @@ def get_category_palette(category_index):
 
 
 def get_font(size, bold=True):
+    """Return a cached SysFont instance for the requested size/weight."""
     k = (size, bold)
     if k not in _fonts:
         _fonts[k] = pygame.font.SysFont("Segoe UI", size, bold=bold)
@@ -31,6 +36,7 @@ def get_font(size, bold=True):
 
 
 def draw_text(surf, text, size, color, cx, cy, bold=True, anchor="center"):
+    """Render text with optional anchor mode (center, topleft, midleft)."""
     s = get_font(size, bold).render(str(text), True, color)
     r = s.get_rect()
     if   anchor == "center":
@@ -43,6 +49,7 @@ def draw_text(surf, text, size, color, cx, cy, bold=True, anchor="center"):
 
 
 def rrect(surf, color, rect, radius=8):
+    """Draw a rounded rectangle convenience wrapper."""
     pygame.draw.rect(surf, color, rect, border_radius=radius)
 
 
@@ -244,6 +251,59 @@ def draw_saw_colored(surf, rect, ox, oy, color_light, color_dark, color_hub, rot
     pygame.draw.circle(surf, color_hub, (cx, cy), radius // 3)
 
 
+def draw_teleporter(surf, cx, cy, radius=20, rotation=0, color_light=(255, 100, 100), color_dark=(200, 50, 50)):
+    """
+    Draw an animated rolling spiral teleporter.
+    
+    Args:
+        surf: Pygame surface to draw on
+        cx, cy: Center coordinates
+        radius: Size of the spiral
+        rotation: Current rotation angle (0-360)
+        color_light: Light color of the spiral
+        color_dark: Dark color of the spiral
+    """
+    # Draw multiple spiral rings at different angles
+    num_spirals = 4
+    spiral_width = 3
+    
+    for i in range(num_spirals):
+        # Calculate angle offset for this spiral ring
+        angle_offset = (rotation + i * 90) % 360
+        
+        # Draw spiral as arcs at different radii
+        for ring in range(3):
+            r = radius // 3 + ring * (radius // 4)
+            if r < 2:
+                continue
+            
+            # Alternate colors
+            color = color_light if ring % 2 == 0 else color_dark
+            
+            # Draw arc of the spiral
+            angle_start = angle_offset
+            angle_end = (angle_offset + 45) % 360
+            
+            # Convert to radians
+            start_rad = math.radians(angle_start)
+            end_rad = math.radians(angle_end)
+            
+            # Calculate arc points
+            start_x = cx + r * math.cos(start_rad)
+            start_y = cy + r * math.sin(start_rad)
+            end_x = cx + r * math.cos(end_rad)
+            end_y = cy + r * math.sin(end_rad)
+
+            # Draw line segment for the spiral
+            pygame.draw.line(surf, color, (start_x, start_y), (end_x, end_y), spiral_width)
+    
+    # Draw outer ring
+    pygame.draw.circle(surf, color_light, (cx, cy), radius, 2)
+    
+    # Draw center dot
+    pygame.draw.circle(surf, color_light, (cx, cy), 4)
+
+
 def _alpha_rect(surf, rgba, rect, radius=0):
     """Blit a translucent (optionally rounded) rect onto surf."""
     r = rect if isinstance(rect, pygame.Rect) else pygame.Rect(*rect)
@@ -347,6 +407,7 @@ def draw_main_menu_background(surf):
 
 
 def draw_splotch_icon(surf, cx, cy, r, color, num):
+    """Draw the stylized blob icon used for menu badges."""
     n = 10
     pts = []
     for i in range(n):
@@ -360,6 +421,7 @@ def draw_splotch_icon(surf, cx, cy, r, color, num):
 
 
 def draw_lock(surf, cx, cy, size=30):
+    """Draw a simple lock icon for unavailable content cards."""
     hw = size//3
     body = pygame.Rect(cx-hw, cy-hw//2, hw*2, int(hw*1.4))
     pygame.draw.rect(surf, (50, 62, 60), body.move(1, 2), border_radius=3)
@@ -369,6 +431,7 @@ def draw_lock(surf, cx, cy, size=30):
 
 
 def draw_flag_icon(surf, cx, cy, size=14, color=WHITE, filled=True):
+    """Draw a small flag glyph used in completion/progress indicators."""
     pole_top = cy - size
     pygame.draw.line(surf, color, (cx, cy+2), (cx, pole_top), 2)
     pts = [(cx, pole_top), (cx+size, pole_top+size//2), (cx, pole_top+size)]

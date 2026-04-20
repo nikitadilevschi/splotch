@@ -15,6 +15,7 @@ from ui.draw_helpers import (
 
 class SpikeObj:
     def __init__(self, x, y, w=32, h=14, steps=None, sensor=None, dir='up'):
+        """Create a spike hazard that can be static or sensor/timeline activated."""
         # x,y is the top-left corner (Tiled coords)
         # The spike tip is at (x + w//2, y)  i.e. centre-x, top-y
         # dir: 'up' (default), 'down', 'left', 'right'
@@ -30,6 +31,7 @@ class SpikeObj:
             self.runner.active = True
 
     def reset(self):
+        """Reset activation/movement state to match level start."""
         self.runner.reset()
         if self.static:
             self.runner.active = True
@@ -37,6 +39,7 @@ class SpikeObj:
             self.sensor.reset()
 
     def update(self, dt, prect):
+        """Check trigger sensor and advance timeline animation."""
         if self.sensor and not self.runner.active:
             if self.sensor.check(prect):
                 self.runner.activate()
@@ -44,10 +47,12 @@ class SpikeObj:
 
     @property
     def cx(self):
+        """Center x used for drawing and orientation math."""
         return self.runner.x + self.w // 2
 
     @property
     def cy(self):
+        """Top y (tip baseline for up spikes) used for drawing."""
         return self.runner.y   # top of spike (tip)
 
     def _triggered(self):
@@ -64,6 +69,7 @@ class SpikeObj:
         return True
 
     def kill_rect(self):
+        """Return active damage hitbox shaped for current spike direction."""
         if not self._triggered():
             return pygame.Rect(0, 0, 0, 0)   # hidden – not yet dangerous
         
@@ -90,6 +96,7 @@ class SpikeObj:
             return pygame.Rect(x + 11, y, 10, 8)
 
     def draw(self, surf, ox, oy, palette=None):
+        """Render spike only after it has been triggered/activated."""
         if not self._triggered():
             return   # still hidden inside the floor tile – don't paint it
         cx, cy = int(self.cx) + ox, int(self.cy) + oy

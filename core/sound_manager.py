@@ -10,6 +10,7 @@ class SoundManager:
     """Centralized sound effect and music management."""
     
     def __init__(self):
+        """Initialize pygame mixer state and preload known sound assets."""
         pygame.mixer.init()
         self.sounds = {}
         self.music = None
@@ -87,7 +88,7 @@ class SoundManager:
         return self.muted
     
     def set_muted(self, muted):
-        """Set mute state directly."""
+        """Apply mute state directly, restarting music when unmuting."""
         if muted and not self.muted:
             self.muted = True
             self.stop_background_music()
