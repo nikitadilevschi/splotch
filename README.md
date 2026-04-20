@@ -53,22 +53,24 @@ A challenging precision platformer game with 7 unique categories and 21 levels o
 
 ## 📸 Screenshots
 
-### Category Select
-![Category Select](./Screenshots/Picture1.png)
+<p align="center">
+  <img src="./Screenshots/Picture1.png" alt="Category Select" width="48%" />
+  <img src="./Screenshots/Picture2.png" alt="Level Select" width="48%" />
+</p>
+<p align="center">
+  <img src="./Screenshots/Picture3.png" alt="Gameplay" width="48%" />
+  <img src="./Screenshots/Picture4.png" alt="Teleporters Lv.3" width="48%" />
+</p>
 
-### Level Select
-![Level Select](./Screenshots/Picture2.png)
+### Gameplay GIFs
 
-### Gameplay
-![Gameplay](./Screenshots/Picture3.png)
-
-### Teleporters Lv.3
-![Teleporters Lv.3](./Screenshots/Picture4.png)
-
-### Gameplay GIF
-![Gameplay GIF](./Screenshots/splotch1.gif)
-![Gameplay GIF](./Screenshots/splotch2.gif)
-![Gameplay GIF](./Screenshots/splotch3.gif)
+<p align="center">
+  <img src="./Screenshots/splotch1.gif" alt="Gameplay GIF 1" width="48%" />
+  <img src="./Screenshots/splotch2.gif" alt="Gameplay GIF 2" width="48%" />
+</p>
+<p align="center">
+  <img src="./Screenshots/splotch3.gif" alt="Gameplay GIF 3" width="48%" />
+</p>
 
 ---
 
