@@ -38,6 +38,7 @@ def check_saw_collision(player_rect, saw_rect):
 
 class MBlock:
     def __init__(self, x, y, w, h, steps, loop=False, auto=False, sensor=None, is_saw=False):
+        """Create a moving platform or saw driven by TLRunner timeline steps."""
         self.ox, self.oy = x, y
         self.w, self.h   = w, h
         self.sensor      = sensor
@@ -50,6 +51,7 @@ class MBlock:
             self.runner.activate()
 
     def reset(self):
+        """Restore timeline state and visuals to their initial values."""
         self.runner.reset()
         self.prev_x, self.prev_y = float(self.ox), float(self.oy)
         if self.auto:
@@ -59,6 +61,7 @@ class MBlock:
         self.saw_rotation = 0.0
 
     def update(self, dt, prect):
+        """Advance movement, optionally trigger via sensor, and spin saw visuals."""
         self.prev_x, self.prev_y = self.runner.x, self.runner.y
         if self.sensor and not self.runner.active:
             if self.sensor.check(prect):
@@ -70,10 +73,12 @@ class MBlock:
 
     @property
     def prev_rect(self):
+        """Return previous-frame rect used for carry/crush calculations."""
         return pygame.Rect(int(self.prev_x), int(self.prev_y), self.w, self.h)
 
     @property
     def rect(self):
+        """Return current collision rect in world coordinates."""
         return pygame.Rect(int(self.runner.x), int(self.runner.y), self.w, self.h)
 
     def draw(self, surf, ox, oy, palette=None):

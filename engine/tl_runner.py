@@ -6,6 +6,7 @@ from core.constants import TILE
 
 
 def _ease(name, t):
+    """Apply a named easing curve to normalized progress t in [0, 1]."""
     t = max(0.0, min(1.0, t))
     n = (name or '').strip().lower()
     if n == 'ease-in':
@@ -20,6 +21,7 @@ def _ease(name, t):
 class TLRunner:
     """Runs a sequence of tween steps on a (x,y) position."""
     def __init__(self, ox, oy, steps, loop=False):
+        """Store origin and movement steps; runner starts inactive until activated."""
         self.ox0, self.oy0 = ox, oy
         self.x, self.y     = float(ox), float(oy)
         self.steps  = steps
@@ -32,6 +34,7 @@ class TLRunner:
         self._sy = self.y
 
     def activate(self):
+        """Start playback from the origin and first step."""
         self.active = True
         self.done   = False
         self.step   = 0
@@ -41,6 +44,7 @@ class TLRunner:
         self._sy = self.y
 
     def reset(self):
+        """Return to origin and clear playback state without activating."""
         self.active = False
         self.done   = False
         self.step   = 0
@@ -50,6 +54,7 @@ class TLRunner:
         self._sy = self.y
 
     def update(self, dt):
+        """Advance current step by dt seconds and update interpolated x/y."""
         if not self.active or self.done or not self.steps:
             return
         self.timer += dt
@@ -63,6 +68,7 @@ class TLRunner:
         self.x = self._sx + s.get('tx', 0) * TILE * ep
         self.y = self._sy + s.get('ty', 0) * TILE * ep
         if pct >= 1.0:
+            # Commit end-of-step position as next step's start point.
             self._sx, self._sy = self.x, self.y
             self.step += 1
             self.timer = 0.0

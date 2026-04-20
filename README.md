@@ -6,11 +6,11 @@
 ![Pygame](https://img.shields.io/badge/Pygame-2.0+-green?style=flat-square&logo=pygame)
 ![License](https://img.shields.io/badge/License-MIT-red?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Complete-success?style=flat-square)
-![Version](https://img.shields.io/badge/Version-1.2.0-blueviolet?style=flat-square)
+![Version](https://img.shields.io/badge/Version-1.3.0-blueviolet?style=flat-square)
 
-A challenging precision platformer game with 6 unique categories and 18 levels of increasing difficulty.
+A challenging precision platformer game with 7 unique categories and 21 levels of increasing difficulty.
 
-[🎮 Play](#features) • [📖 Docs](#documentation) • [🚀 Installation](#installation) • [🤝 Contributing](#contributing)
+[🎮 Play](#-key-features) • [📖 Docs](#-documentation) • [🚀 Installation](#-installation) • [🤝 Contributing](#-contributing)
 
 </div>
 
@@ -18,19 +18,29 @@ A challenging precision platformer game with 6 unique categories and 18 levels o
 
 ## 🎯 Overview
 
-**RAGE BAIT** is a precision platformer game where players must navigate through deadly traps, falling platforms, and rotating saws. Each of the 6 categories presents unique challenges with their own visual theme and mechanics.
+**RAGE BAIT** is a precision platformer game where players must navigate deadly traps, moving hazards, control twists, and teleportation puzzles. Each category has its own mechanics and visual style.
+
+### 🆕 Current Updates (main branch)
+
+- ✅ Expanded to **7 categories / 21 total levels**
+- 🌀 Added full **Teleporters** category with animated, moving portals
+- 🎯 Added **sensor-triggered events** (moving traps, moving teleporters, goal relocation)
+- 🔁 Added advanced teleporter behavior: **multiple destinations**, **self-top destination mode**, configurable cooldown
+- 📉 Added per-level tuning like **custom fall-speed caps** and jump-boost tiles
+- 📊 Added **per-level death tracking** (`level_deaths`) in save data and UI
 
 ### ✨ Key Features
 
-- 🎨 **6 Unique Categories** with distinct visual themes and color palettes
+- 🎨 **7 Unique Categories** with distinct visual themes and color palettes
   - 🌊 **GAPS** - Platforms that collapse when you jump on them
   - 🔴 **SPIKES** - Hidden guillotines that pop up when you approach
   - 💨 **PUSH** - Mobile blocks that push you across gaps
   - 📦 **PLATFORMS** - Vertical platforms that crush you if you get caught
   - 🔪 **SAWS** - Rotating blades that move along platforms
-  - 🎮 **CONTROLS** - Tutorial levels teaching game mechanics
+  - 🎮 **CONTROLS** - Tutorial levels teaching mechanics (including control reversal/jump boosts)
+  - 🌀 **TELEPORTERS** - Portal puzzles with chained destinations and moving teleporters
 
-- 🎮 **18 Challenging Levels** - 3 levels per category with progressive difficulty
+- 🎮 **21 Challenging Levels** - 3 levels per category with progressive difficulty
 - 🎨 **Dynamic Color System** - Each category has its own cohesive visual theme
 - 💾 **Persistent Save System** - Your progress is automatically saved
 - 🏆 **Achievement Tracking** - Death counter and level completion badges
@@ -43,11 +53,22 @@ A challenging precision platformer game with 6 unique categories and 18 levels o
 
 ## 📸 Screenshots
 
-```
-Main Menu              Level Select           Gameplay
-[6 Categories]        [Category Colors]       [Dynamic Colors]
-18 Total Levels       3 Levels Each           Real-time Physics
-```
+### Category Select
+![Category Select](./Screenshots/Picture1.png)
+
+### Level Select
+![Level Select](./Screenshots/Picture2.png)
+
+### Gameplay
+![Gameplay](./Screenshots/Picture3.png)
+
+### Teleporters Lv.3
+![Teleporters Lv.3](./Screenshots/Picture4.png)
+
+### Gameplay GIF
+![Gameplay GIF](./Screenshots/splotch1.gif)
+![Gameplay GIF](./Screenshots/splotch2.gif)
+![Gameplay GIF](./Screenshots/splotch3.gif)
 
 ---
 
@@ -99,16 +120,6 @@ assets/sounds/
 ├── win.wav               # Victory sound effect
 └── background_music.wav  # Looping background music
 ```
-
-To generate placeholder audio files, run:
-```bash
-python create_sounds_quick.py
-```
-
-For more details, see [SOUND_SETUP.md](./SOUND_SETUP.md)
-
----
-
 ## 🎮 How to Play
 
 ### Controls
@@ -126,8 +137,9 @@ For more details, see [SOUND_SETUP.md](./SOUND_SETUP.md)
 Navigate through each level by:
 1. Jumping over falling platforms
 2. Avoiding deadly spikes and saws
-3. Using moving platforms strategically
-4. Reaching the flag at the end
+3. Using moving platforms and teleporters strategically
+4. Triggering sensors when needed
+5. Reaching the flag at the end
 
 ### Tips
 
@@ -169,6 +181,16 @@ Each category features a carefully designed color palette that applies to all vi
 - Dark: `(140, 110, 30)` - Platform color
 - Accent: `(240, 200, 110)` - Bright highlights
 
+**CONTROLS (Green)**
+- Primary: `(50, 180, 100)` - Friendly tutorial vibe
+- Dark: `(30, 130, 70)` - Platform color
+- Accent: `(120, 240, 160)` - UI highlights
+
+**TELEPORTERS (Magenta)**
+- Primary: `(180, 80, 180)` - Dimensional portal theme
+- Dark: `(130, 50, 130)` - Platform color
+- Accent: `(240, 160, 240)` - Portal/UI highlights
+
 ---
 
 ## 📁 Project Structure
@@ -184,6 +206,7 @@ splotch/
 │   ├── physics.py                # Player physics & collision
 │   ├── mblock.py                 # Moving blocks
 │   ├── spike.py                  # Spike hazards
+│   ├── teleporter.py             # Teleporter logic & destination modes
 │   ├── sensor.py                 # Activation sensors
 │   ├── tl_runner.py              # Timeline animations
 │   └── __init__.py
@@ -194,6 +217,8 @@ splotch/
 │   ├── push.py                   # PUSH category levels
 │   ├── platforms.py              # PLATFORMS category levels
 │   ├── saws.py                   # SAWS category levels
+│   ├── controls.py               # CONTROLS category levels
+│   ├── teleporters.py            # TELEPORTERS category levels
 │   └── __init__.py
 ├── scenes/                        # Game scenes
 │   ├── category_select.py        # Main menu
@@ -213,7 +238,6 @@ splotch/
 │       ├── win.wav               # Victory sound effect
 │       └── background_music.wav  # Looping background music
 ├── main.py                        # Entry point
-├── splotch.py                     # Main game class (legacy)
 ├── requirements.txt               # Dependencies
 └── README.md                      # This file
 ```
@@ -242,9 +266,11 @@ Progress is automatically saved to `save.json`:
 ```json
 {
     "deaths": 41,
-    "unlocked_cats": [0, 1, 2, 3, 4],
-    "unlocked_lvls": {"0": [0, 1, 2], "1": [0, 1, 2]},
-    "completed": {"0_0": true, "0_1": true}
+    "level_deaths": {"0_0": 3, "6_1": 12},
+    "unlocked_cats": [0, 1, 2, 3, 4, 5, 6],
+    "unlocked_lvls": {"0": [0, 1, 2], "1": [0, 1], "6": [0, 1]},
+    "completed": {"0_0": true, "0_1": true, "6_0": true},
+    "muted": false
 }
 ```
 
@@ -253,9 +279,10 @@ Progress is automatically saved to `save.json`:
 ## 📚 Documentation
 
 - 📖 [Technical Documentation](./DOCUMENTATIE_FINALA_PROIECT.md) (Romanian)
-- 🎨 [Color Palette System](./COLOR_PALETTE_SYSTEM.md)
-- 📋 [System Architecture](./SYSTEM_ARCHITECTURE.md)
-- 🔧 [Implementation Guide](./COLOR_PALETTE_SYSTEM.md)
+- 🗂️ [Changelog](./CHANGELOG.md)
+- 🎨 [Color Palette System](./Changes%20during%20the%20tests/COLOR_PALETTE_SYSTEM.md)
+- 📋 [System Architecture](./Changes%20during%20the%20tests/SYSTEM_ARCHITECTURE.md)
+- ✅ [Final Delivery Notes](./Changes%20during%20the%20tests/FINAL_DELIVERY.md)
 
 ---
 
@@ -311,6 +338,10 @@ This project is licensed under the **MIT License** - see [LICENSE](./LICENSE) fi
 
 - [x] Sound and music system
 - [x] Mute button with persistent state
+- [x] Controls category (tutorial mechanics)
+- [x] Teleporters category with advanced portal behaviors
+- [x] Per-level deaths tracking and category death summary
+- [x] Sensor-triggered goal relocation and dynamic trap/portal activation
 
 ### Future Enhancements
 
