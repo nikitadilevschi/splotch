@@ -1,549 +1,383 @@
-# SPLOTCH - Joc de Platformă de Precizie
-## Documentație Tehnică Finală - Proiect de Licență
+# RAGE BAIT
+## Documentatie tehnica finala - Proiect de licenta
 
 **Autor:** [Nume Student]  
+**Coordonator:** [Nume Coordonator]  
+**Institutie:** [Universitate]  
+**Program de studii:** [Informatica / Inginerie Software]  
 **Data:** Aprilie 2026  
-**Instituție:** [Universitate]  
-**Programul de Studii:** [Inginerie Software/Informatică]
+**Versiune aplicatie:** 1.3.0
 
 ---
 
-## CUPRINS
+## Cuprins
 
-1. [Introducere](#introducere)
-2. [Descrierea Proiectului](#descrierea-proiectului)
-3. [Arhitectura Sistemului](#arhitectura-sistemului)
-4. [Categorii și Mecanici de Joc](#categorii-și-mecanici-de-joc)
-5. [Sistem de Palete de Culori](#sistem-de-palete-de-culori)
-6. [Implementare Tehnică](#implementare-tehnică)
-7. [Structura Fișierelor](#structura-fișierelor)
-8. [Mecanici de Joc Detaliate](#mecanici-de-joc-detaliate)
-9. [Sistemul de Nivele](#sistemul-de-nivele)
-10. [Concluzii și Perspective Viitoare](#concluzii-și-perspective-viitoare)
-
----
-
-## INTRODUCERE
-
-### 1.1 Motivație și Obiective
-
-Splotch este un joc de platformă de precizie dezvoltat în Python cu ajutorul bibliotecii Pygame. Proiectul a fost conceput cu scopul de a demonstra cunoștințele în domeniul dezvoltării jocurilor, gestionării stării aplicației, și a designului interfețelor grafice interactive.
-
-**Obiectivele principale ale proiectului:**
-- Implementarea unui motor de joc funcțional cu fizică realistă
-- Crearea unui sistem de nivele modular și extensibil
-- Dezvoltarea unui sistem de tematizare visual coheziv
-- Implementarea mecanicilor complexe de platformă și platforme mobile
-- Crearea unei experiențe de joc challenging și plăcute
-
-### 1.2 Tehnologii Utilizate
-
-- **Limbaj de Programare:** Python 3.13
-- **Biblioteci Grafice:** Pygame
-- **Formaturi de Stocare:** JSON (salvare progres)
-- **Sisteme de Operare:** Windows, Linux, macOS
+1. Introducere
+2. Obiective si cerinte
+3. Tehnologii utilizate
+4. Arhitectura aplicatiei
+5. Structura proiectului
+6. Modelul datelor de nivel
+7. Mecanici si subsisteme de joc
+8. Persistenta datelor (save system)
+9. Interfata utilizator si UX
+10. Testare si validare
+11. Limitari cunoscute
+12. Concluzii si directii viitoare
+13. Bibliografie
 
 ---
 
-## DESCRIEREA PROIECTULUI
+## 1. Introducere
 
-### 2.1 Concept General
+**Rage Bait** este un joc 2D de tip precision platformer dezvoltat in Python folosind biblioteca Pygame. Proiectul are scop educational si demonstreaza competente de arhitectura software, modelare a starii aplicatiei, implementare de fizica 2D si design modular orientat pe extensibilitate.
 
-Splotch este un joc de platformă unde jucătorul trebuie să traverseze nivele pline de pericole (decupări, tăieturi cu ferăstrău, blocuri mobile). Jocul este împărțit în 5 categorii, fiecare cu 3 nivele de dificultate progresivă.
-
-### 2.2 Mecanica Principală
-
-Jucătorul controlează o figură pătrată care trebuie să:
-- Sară peste obstacole
-- Evite platformele care se mișcă sau cad
-- Evite ghilotine și ferăstraie rotative
-- Atingă steagul de victorie pentru a completa nivelul
-
-### 2.3 Sisteme de Progresie
-
-- **Sistem de Salvare:** Progresul este salvat automat în `save.json`
-- **Deblocarea Categoriilor:** Categoriile se deblochează progresiv
-- **Contor de Decese:** Urmărește numărul total de momente în care jucătorul a murit
-- **Indicatori de Progres:** Steaguri care indică nivelele completate
+Tema centrala a jocului este traversarea unor niveluri cu obstacole dinamice, in care succesul depinde de timing, control precis si intelegerea pattern-urilor de miscare ale capcanelor.
 
 ---
 
-## ARHITECTURA SISTEMULUI
+## 2. Obiective si cerinte
 
-### 3.1 Diagramă de Flux al Aplicației
+### 2.1 Obiective principale
 
-```
-Pornire Aplicație
-       ↓
-Inițializare Motor Pygame
-       ↓
-Încărcare Salvare (save.json)
-       ↓
-Selectare Categorie
-       ↓
-Selectare Nivel
-       ↓
-Inițializare Nivel
-       ↓
-Buclă de Joc (Update/Render)
-       ↓
-Detectare Condiții Sfâșit
-       ↓
-Returnare la Meniu
-```
+- Implementarea unui gameplay fluid la 60 FPS, cu input responsive.
+- Organizarea codului pe module independente (core, engine, levels, scenes, ui).
+- Definirea nivelurilor intr-un format declarativ, usor de extins.
+- Integrarea unui sistem de progres persistent (salvare automata).
+- Dezvoltarea unei identitati vizuale coerente prin palete de culori pe categorie.
+- Integrarea unui subsistem audio complet (muzica, efecte, mute persistent).
 
-### 3.2 Structura Modulară
+### 2.2 Cerinte functionale
 
-Proiectul este organizat în următoarele module principale:
+- Selectare categorie si nivel prin scene separate.
+- Simulare fizica pentru jucator (gravitate, saritura, coliziuni).
+- Capcane cu activare conditionata (senzori) si miscari pe timeline.
+- Teleportoare cu destinatii multiple si mod "self_top".
+- Contorizare decese totale si per nivel.
+- Deblocare progresiva a continutului.
 
-```
+### 2.3 Cerinte non-functionale
+
+- Cod modular si lizibil pentru prezentare academica.
+- Timpi de raspuns buni pe sisteme desktop obisnuite.
+- Compatibilitate minima: Python 3.10+ (dezvoltat/testat pe 3.13).
+- Mentinerea starii intre sesiuni prin JSON.
+
+---
+
+## 3. Tehnologii utilizate
+
+- **Limbaj:** Python
+- **Framework multimedia:** Pygame
+- **Persistenta:** JSON (`save.json`)
+- **Gestionare dependinte:** `pip` + `requirements.txt`
+- **Control versiuni:** Git / GitHub
+
+Motivatie tehnologica: stack-ul Python + Pygame permite dezvoltare rapida, cod usor de explicat intr-un context universitar si control direct asupra buclei de joc.
+
+---
+
+## 4. Arhitectura aplicatiei
+
+Aplicatia foloseste o arhitectura de tip **scene-based**, coordonata de clasa `Game` din `main.py`.
+
+Flux general:
+
+1. Initializare Pygame, fereastra, ceas, salvare.
+2. Afisare scena de selectie categorie.
+3. Selectie nivel.
+4. Initializare scena gameplay.
+5. Bucla de joc: `handle_event -> update -> draw`.
+6. Tranzitii intre scene in functie de actiuni/stare.
+
+### 4.1 Scene principale
+
+- `CategorySelectScene` - selectie categorie
+- `LevelSelectScene` - selectie nivel in categorie
+- `LevelScene` - logica gameplay, coliziuni, capcane, win/death
+
+### 4.2 Separarea responsabilitatilor
+
+- **core/**: constante, salvare, audio
+- **engine/**: fizica, capcane, senzori, timeline
+- **levels/**: definitii de nivele + builder
+- **scenes/**: managementul starii de joc
+- **ui/**: functii de desen si HUD
+
+Aceasta separare reduce cuplarea, creste mentenabilitatea si sustine extinderea (noi mecanici / noi categorii).
+
+---
+
+## 5. Structura proiectului
+
+```text
 splotch/
-├── core/                 # Funcționalități de bază
-│   ├── constants.py      # Constante și palete de culori
-│   ├── save_manager.py   # Gestionarea salvării
+├── main.py
+├── core/
+│   ├── constants.py
+│   ├── save_manager.py
+│   └── sound_manager.py
+├── engine/
+│   ├── physics.py
+│   ├── mblock.py
+│   ├── spike.py
+│   ├── teleporter.py
+│   ├── sensor.py
+│   └── tl_runner.py
+├── levels/
+│   ├── builder.py
+│   ├── gaps.py
+│   ├── spikes.py
+│   ├── push.py
+│   ├── platforms.py
+│   ├── saws.py
+│   ├── controls.py
+│   ├── teleporters.py
 │   └── __init__.py
-├── engine/              # Motor de joc
-│   ├── physics.py       # Calcule de fizică
-│   ├── mblock.py        # Blocuri mobile
-│   ├── spike.py         # Obstacole cu tăieturi
-│   ├── sensor.py        # Senzori de activare
-│   ├── tl_runner.py     # Executor de timeline
-│   └── __init__.py
-├── levels/              # Definiții de nivele
-│   ├── builder.py       # Constructor de nivele
-│   ├── platforms.py     # Nivelele Platforms
-│   ├── gaps.py          # Nivelele Gaps
-│   ├── spikes.py        # Nivelele Spikes
-│   ├── saws.py          # Nivelele Saws
-│   ├── push.py          # Nivelele Push
-│   └── __init__.py
-├── scenes/              # Scene de aplicație
-│   ├── category_select.py   # Selectarea categoriei
-│   ├── level_select.py      # Selectarea nivelului
-│   ├── level_scene.py       # Scena de joc
-│   └── __init__.py
-├── ui/                  # Interfață grafică
-│   ├── draw_helpers.py  # Funcții de desenare
-│   ├── hud.py           # Head-up display
-│   └── __init__.py
-├── main.py             # Punct de intrare
-├── splotch.py          # Clasă aplicație principală
-└── save.json           # Fișier de salvare
+├── scenes/
+│   ├── category_select.py
+│   ├── level_select.py
+│   └── level_scene.py
+├── ui/
+│   ├── draw_helpers.py
+│   └── hud.py
+├── assets/
+│   ├── images/
+│   └── sounds/
+├── save.json
+└── README.md
 ```
 
-### 3.3 Modelul de Scene
+Date curente joc (v1.3.0):
 
-Aplicația funcționează pe un model de scene:
-- **CategorySelectScene:** Selectarea categoriei
-- **LevelSelectScene:** Selectarea nivelului din categorie
-- **LevelScene:** Scena de joc cu gameplay activ
+- **7 categorii**
+- **21 niveluri** (3 niveluri/categorie)
+
+Categorii: `Gaps`, `Spikes`, `Push`, `Platforms`, `Saws`, `Controls`, `Teleporters`.
 
 ---
 
-## CATEGORII ȘI MECANICI DE JOC
+## 6. Modelul datelor de nivel
 
-### 4.1 Cinci Categorii Principale
+Un nivel este definit ca dictionar Python in modulele din `levels/`.
 
-#### 4.1.1 GAPS (Decupări)
+Structura uzuala:
 
-**Descriere:** Platforme care cad și forțează jucătorul să sară peste prapastii
-
-**Mecanica:**
-- Platforme care se prăbușesc sub greutatea jucătorului
-- Jucătorul trebuie să sară înainte ca platforma să cadă
-- Dificultate progresivă: decupări din ce în ce mai mari
-
-**Implementare:**
 ```python
-'traps': [
-    dict(kind='mblock', x=544, y=320, w=96, h=160,
-         sensor=(560, 192, 32, 128),
-         steps=[dict(ty=6, t=0.3)], loop=False, auto=False)
+LEVEL_X = {
+    'tiles': [...],            # grid 27x15, valori 0/1
+    'player': [x, y],          # spawn jucator
+    'goal': [x, y],            # pozitie steag
+    'traps': [...],            # capcane (mblock/spike/teleporter)
+    'hint': 'text optional',
+}
+```
+
+Campuri extinse folosite in v1.3.0:
+
+- `goal_trigger`: muta steagul cand jucatorul atinge un senzor
+- `max_fall`: plafon local pentru viteza de cadere
+- `reversed_tiles`: zone cu control inversat
+- `jump_boost_tiles`: placi cu saritura imbunatatita
+
+### 6.1 Constructorul de capcane
+
+`levels/builder.py` foloseste `_build_trap(td)` pentru a construi obiecte runtime in functie de `kind`:
+
+- `mblock` -> `MBlock`
+- `spike` -> `SpikeObj`
+- `teleporter` -> `Teleporter`
+
+Pentru teleporter sunt suportate:
+
+- destinatie unica (`dest_x`, `dest_y`)
+- destinatii multiple (`destinations`)
+- modul `self_top` (teleport pe verticala deasupra portalului curent)
+- activare prin senzor
+- cooldown configurabil
+
+---
+
+## 7. Mecanici si subsisteme de joc
+
+### 7.1 Fizica jucatorului
+
+`engine/physics.py` gestioneaza:
+
+- gravitatia
+- saritura
+- coliziunea cu platforme
+- coyote time si jump buffering (control mai permissiv)
+
+Parametri principali (din `core/constants.py`):
+
+- `GRAVITY = 1400`
+- `MAX_FALL = 850`
+- `JUMP_V = -420`
+- `SPEED = 210`
+
+### 7.2 Timeline runner pentru miscari
+
+`engine/tl_runner.py` interpreteaza pasi de animatie pe baza de timp:
+
+- `tx` / `ty` = deplasare in multipli de tile
+- `t` = durata
+- `d` = delay optional
+- `e` = easing (`ease-in`, `ease-out`, `ease-in-out`)
+
+Format recomandat al pasilor:
+
+```python
+steps = [
+    {'tx': 2.0, 't': 0.6},
+    {'ty': -1.0, 't': 0.4, 'e': 'ease-out'},
 ]
 ```
 
-#### 4.1.2 SPIKES (Ghilotine/Tăieturi)
+### 7.3 Obstacole si evenimente
 
-**Descriere:** Obstacole ascunzute care se ridică din platformă când jucătorul se apropie
+- **MBlock**: blocuri mobile, inclusiv mod saw
+- **SpikeObj**: capcane tip spikes
+- **Teleporter**: transport instant pe destinatie
+- **Sensor**: activare conditionata pentru capcane/obiective
 
-**Mecanica:**
-- Tăieturi care se ascund în platformă
-- Se activează când jucătorul se apropie (pe baza unui senzor)
-- Contact = moarte instantanee
+### 7.4 Reguli de moarte si victorie
 
-**Detectare:**
-```python
-if pr.colliderect(sp.kill_rect()):
-    self._die()
-    return
-```
+Conditii principale de moarte:
 
-#### 4.1.3 PUSH (Blocuri Mobile Orizontale)
+- cadere sub lumea de joc
+- coliziune cu spike
+- coliziune cu saw
+- zdrobire de bloc mobil
 
-**Descriere:** Blocuri care se mișcă orizontal, empingând jucătorul
+Conditie de victorie:
 
-**Mecanica:**
-- Blocuri care se mișcă în direcții specificate
-- Pot deplasa jucătorul dacă este pe ele
-- Contactul din laterale = moarte prin zdrobire
+- jucatorul intersecteaza `goal_rect`
 
-#### 4.1.4 PLATFORMS (Platforme Mobile Verticale)
+La victorie:
 
-**Descriere:** Platforme care se ridică și coboară
-
-**Mecanica:**
-- Platforme care se deplasează pe verticală
-- Jucătorul poate fi zdrobit dacă este prins între ele
-- Detectare crush: când jucătorul este complet înclus în interiorul unei platforme
-
-**Detectare Zdrobire:**
-```python
-if mr.top < pr.top and mr.bottom > pr.bottom:
-    # Jucator zdrobit
-    self._die()
-    return
-```
-
-#### 4.1.5 SAWS (Ferăstraie)
-
-**Descriere:** Discuri rotative cu dinți care se mișcă pe platformă
-
-**Mecanica:**
-- Ferăstraie care se rotesc continuu
-- Se mișcă pe platforme sau spații deschise
-- Contactul = moarte instantanee
+- nivelul este marcat completat
+- se deblocheaza urmatorul nivel
+- la completarea categoriei se deblocheaza categoria urmatoare
 
 ---
 
-## SISTEM DE PALETE DE CULORI
+## 8. Persistenta datelor (save system)
 
-### 5.1 Concepție și Implementare
+Persistenta este implementata in `core/save_manager.py`.
 
-Un sistem inovator de tematizare vizuală a fost implementat pentru a asigura coerență vizuală în fiecare categorie.
-
-### 5.2 Structura Paletei
-
-Fiecare categorie are o paletă cu 5 culori:
-
-```python
-CAT_PALETTES = [
-    # Categoria 0: GAPS (Teal)
-    {
-        'primary':    (70, 180, 168),      # Culoare fundal
-        'dark':       (45, 130, 120),      # Platforme și dale
-        'light':      (100, 210, 200),     # Accente
-        'accent':     (120, 230, 220),     # Elemente UI
-        'spike':      (160, 160, 160),     # Tăieturi
-    },
-    # Categoria 1: SPIKES (Roșu)
-    {
-        'primary':    (185, 75, 75),
-        'dark':       (140, 50, 50),
-        'light':      (220, 100, 100),
-        'accent':     (240, 130, 130),
-        'spike':      (200, 100, 100),
-    },
-    # ... alte categorii
-]
-```
-
-### 5.3 Aplicare Dinamică
-
-Paleta este aplicată din urmă în urmă pe tot ecranul jocului:
-
-**Locuri de Aplicare:**
-- Fundal joc (culoare primară)
-- Dale și platforme (culoare întunecată)
-- Bară de top (culoare întunecată)
-- Elemente UI (culori accent)
-- Card-uri de victorie (teme categorie)
-- Indicatori de progres (culori accent)
-
-### 5.4 Funcția de Recuperare Paletă
-
-```python
-def get_category_palette(category_index):
-    """Obține paleta de culori pentru o categorie dată."""
-    if 0 <= category_index < len(CAT_PALETTES):
-        return CAT_PALETTES[category_index]
-    return CAT_PALETTES[0]  # Implicit teal
-```
-
----
-
-## IMPLEMENTARE TEHNICĂ
-
-### 6.1 Motorul de Fizică
-
-#### 6.1.1 Gravitație și Cădere
-
-```python
-self.vy += dt * 800  # Accelerație gravitație
-self.y += self.vy * dt
-
-# Limita vitezei de cădere
-if self.vy > 800:
-    self.vy = 800
-```
-
-#### 6.1.2 Detecția Coliziunilor
-
-Coliziunile sunt detectate prin verificarea suprapunerii dreptunghiurilor:
-
-```python
-if player_rect.colliderect(platform_rect):
-    # Rezolvare coliziune
-    if player_vy > 0:  # Cădere
-        player.y = platform.top - player.height
-        player.vy = 0
-```
-
-#### 6.1.3 Platforme Mobile
-
-Platformele mobile sunt controlate prin timeline-uri:
-
-```python
-class TLRunner:
-    def __init__(self, x, y, steps, loop=False):
-        self.x = x
-        self.y = y
-        self.steps = steps  # Lista de pași de animație
-        self.loop = loop
-    
-    def update(self, dt):
-        # Actualizare poziție pe baza timeline-ului
-        if self.t >= self.step_duration:
-            self.advance_step()
-```
-
-### 6.2 Sistemul de Senzori
-
-Senzorii sunt folosiți pentru a activa platformele mobile:
-
-```python
-class Sensor:
-    def __init__(self, x, y, w, h):
-        self.rect = pygame.Rect(x, y, w, h)
-    
-    def check(self, player_rect):
-        """Verifică dacă jucătorul este în senzor."""
-        return self.rect.colliderect(player_rect)
-```
-
-### 6.3 Sistemul de Salvare
-
-Progresul este salvat în JSON:
+Modelul de salvare include:
 
 ```json
 {
-    "deaths": 41,
-    "unlocked_cats": [0, 1, 2, 3],
-    "unlocked_lvls": {
-        "0": [0, 1, 2],
-        "1": [0, 1, 2],
-        "2": [0]
-    },
-    "completed": {
-        "0_0": true,
-        "0_1": true,
-        "0_2": true
-    }
+  "deaths": 0,
+  "level_deaths": {},
+  "completed": {},
+  "unlocked_cats": [0, 1],
+  "unlocked_lvls": {
+    "0": [0], "1": [0], "2": [0],
+    "3": [0], "4": [0], "5": [0], "6": [0]
+  },
+  "muted": false
 }
 ```
 
----
+Caracteristici:
 
-## STRUCTURA FIȘIERELOR
-
-### 7.1 Fișiere Principale
-
-#### 7.1.1 main.py
-Punct de intrare al aplicației. Inițializează Pygame și pornește ciclu principal.
-
-#### 7.1.2 splotch.py
-Clasă principală Game care gestionează scene și tranziții.
-
-#### 7.1.3 core/constants.py
-Constante globale: dimensiuni ecran, culori, palete, nume categorii.
-
-#### 7.1.4 core/save_manager.py
-Funcții pentru încărcare și salvare a progresului din/în JSON.
-
-### 7.2 Module de Joc
-
-#### 7.2.1 engine/physics.py
-Clasa Player cu fizică, coliziuni, și mișcare.
-
-#### 7.2.2 engine/mblock.py
-Clasă MBlock pentru platforme mobile cu timeline-uri.
-
-#### 7.2.3 engine/spike.py
-Clasă SpikeObj pentru tăieturi ascunse și mobile.
-
-#### 7.2.4 engine/sensor.py
-Clasa Sensor pentru detectarea prezenței jucătorului.
-
-### 7.3 Definiri de Nivele
-
-#### 7.3.1 levels/gaps.py, platforms.py, spikes.py, etc.
-Definiții de nivele în format dictionar cu:
-- `tiles`: Tablou 2D al platformei
-- `traps`: Lista de pericole
-- `player`: Poziție inițială
-- `goal`: Poziție steag
-- `hint`: Indiciu pentru jucător
+- compatibilitate cu salvari mai vechi prin backfill de chei lipsa
+- salvare automata la evenimente relevante (moarte, win, mute)
+- statistici separate total/per nivel
 
 ---
 
-## MECANICI DE JOC DETALIATE
+## 9. Interfata utilizator si UX
 
-### 8.1 Sistem de Moarte
+### 9.1 Sistem vizual pe palete
 
-Jucătorul poate muri din mai multe cauze:
+`core/constants.py` defineste `CAT_PALETTES`, cate una pentru fiecare categorie. Paleta este folosita pentru:
 
-**8.1.1 Cădere**
-```python
-if p.y > OH + 80:
-    self._die()
-```
+- fundal si tile-uri
+- accent UI
+- card de level complete
+- elemente HUD
 
-**8.1.2 Contact cu Tăieturi**
-```python
-for sp in self._spikes:
-    if pr.colliderect(sp.kill_rect()):
-        self._die()
-```
+### 9.2 HUD si feedback
 
-**8.1.3 Zdrobire între Platforme**
-```python
-for mb in self._mblocks:
-    if mr.top < pr.top and mr.bottom > pr.bottom:
-        # Jucator complet închis în platformă
-        self._die()
-```
+`scenes/level_scene.py` + `ui/draw_helpers.py` afiseaza:
 
-**8.1.4 Contact cu Ferăstraie**
-```python
-for mb in self._mblocks:
-    if mb.is_saw and check_saw_collision(pr, mb.rect):
-        self._die()
-```
+- top bar cu nivel curent
+- buton back
+- progres pe cele 3 niveluri ale categoriei
+- contor decese per nivel
+- buton mute
+- hint-uri contextuale
+- overlay de moarte / victorie
 
-### 8.2 Sistem de Recompense
+### 9.3 Audio
 
-- **Fiecare nivel completat:** Steagul se marchează ca complet
-- **Toate nivelele dintr-o categorie:** Categoria se marchează complet
-- **Categoria completă:** Deblochează categoria următoare
-- **Contor de decese:** Urmărește performanța totală
+`core/sound_manager.py` gestioneaza:
 
-### 8.3 Mecanica "Carry Player"
-
-Jucătorul care stă pe o platformă mobilă este transportat cu ea:
-
-```python
-def _carry_player_with_moving_blocks(self, p, pr):
-    for mb in self._mblocks:
-        if pr.colliderect(mb.rect):
-            dx = mb.rect.x - mb.prev_rect.x
-            dy = mb.rect.y - mb.prev_rect.y
-            p.x += dx
-            p.y += dy
-```
+- muzica de fundal
+- efecte jump/death/win
+- mute/unmute global cu persistenta in salvare
 
 ---
 
-## SISTEMUL DE NIVELE
+## 10. Testare si validare
 
-### 9.1 Format de Definiție
+Testarea a fost realizata predominant manual, orientata pe functionalitate si regresii:
 
-Fiecare nivel este definit ca dicționar Python:
+- verificare tranzitii intre scene
+- verificare coliziuni si fizica pe fiecare categorie
+- verificare activare senzori si secvente timeline
+- verificare teleportoare (destinatii multiple + self_top)
+- verificare salvare/incarcare progres
+- verificare comportament audio si mute persistent
 
-```python
-LEVEL_NAME = {
-    'tiles': [matriz_27x15_cu_1=platform_0=gol],
-    'player': [x, y],
-    'goal': [x, y],
-    'traps': [list_de_blockuri_mobile],
-    'hint': "Indiciu pentru jucător"
-}
-```
+### 10.1 Scenarii de regresie recomandate
 
-### 9.2 Tabloul de Dale
-
-Tabloul 2D este liniarizat într-o listă de 27×15 = 405 elemente:
-- `1` = Dale solide (platformă)
-- `0` = Spațiu gol
-
-### 9.3 Progresie de Dificultate
-
-**Nivel 1:** Introducere ușoară la mecanica categoriei
-**Nivel 2:** Combinare de mecanici, dificultate medie
-**Nivel 3:** Challenge complex, dificultate înaltă
+1. Pornire joc nou si verificare deblocari initiale.
+2. Finalizarea unui nivel si verificare `completed`/`unlocked_lvls`.
+3. Moarte repetata si verificare crestere `deaths` + `level_deaths`.
+4. Test pentru niveluri cu senzori, inclusiv teleporter activat conditionat.
+5. Test pentru limite de nivel (anti-teleport in afara lumii).
 
 ---
 
-## CONCLUZII ȘI PERSPECTIVE VIITOARE
+## 11. Limitari cunoscute
 
-### 10.1 Realizări
-
-✅ Joc de platformă complet funcțional  
-✅ 5 categorii cu 3 nivele fiecare (15 nivele total)  
-✅ Sistem de fizică și coliziuni robust  
-✅ Sistemul de palete de culori inovator  
-✅ Progresie și salvare persistentă  
-✅ Interfață grafică polisată și profesională  
-
-### 10.2 Implementări Viitoare
-
-1. **Nivel de Dificultate Dinamic**
-   - Ajustarea vitezelor pe baza performanței
-   - Nivele bonusAnonymous
-
-2. **Editor de Nivele**
-   - Instrument pentru crearea de nivele custom
-   - Export/Import de nivele
-
-3. **Multiplayer Online**
-   - Tabele de clasament online
-   - Competiții mondiale
-
-4. **Elemente Grafice Avansate**
-   - Animații de particulă
-   - Efecte de shader
-   - Teme cu gradient
-
-5. **Sunet și Muzică**
-   - Audio spatialized 3D
-   - Muzică de fundal dinamică
-   - Efecte sonore pentru fiecare acțiune
-
-6. **Sistem de Achievement-uri**
-   - Realizări deblocabile
-   - Badges de performanță
-   - Provocări zilnice
-
-### 10.3 Concluzii Finale
-
-Splotch demonstrează o înțelegere solidă a:
-- Dezvoltării jocurilor în Python
-- Designului arhitecturii software
-- Gestionării stării aplicației
-- Creării experiențelor utilizator engaging
-- Implementării sistemelor complexe de fizică
-
-Proiectul servește ca punct de plecare solid pentru dezvoltarea unui motor de joc mai avansat și ar putea fi extins cu funcționalități suplimentare.
+- Testare automata limitata (proiect orientat gameplay real-time).
+- Dependenta directa de Pygame pentru randare/input/audio.
+- Echilibrarea dificultatii se face manual (fara instrument de analytics).
+- Fara editor intern de nivel in versiunea curenta.
 
 ---
 
-## REFERINȚE
+## 12. Concluzii si directii viitoare
 
-- Documentația Pygame: https://www.pygame.org/docs/
-- Python Official Documentation: https://docs.python.org/3/
-- Game Programming Patterns: https://gameprogrammingpatterns.com/
+### 12.1 Concluzii
+
+Proiectul valideaza implementarea unui joc 2D complet functional, cu arhitectura modulara, mecanici variate si persistenta robusta. Sistemul este suficient de flexibil pentru extindere si este adecvat pentru sustinere academica datorita separarii clare a responsabilitatilor.
+
+### 12.2 Directii de dezvoltare
+
+- editor vizual de niveluri
+- sistem de achievement-uri
+- replay/speedrun mode
+- leaderboard online
+- extinderea setului de mecanici (ex. trigger chaining avansat)
+- testare automata partiala pentru logica non-grafica
 
 ---
 
-**Document Finalizat:** Aprilie 2026  
-**Status:** Complet și Verificat  
-**Versiune:** 1.0 - Finală
+## 13. Bibliografie
 
+1. Documentatia oficiala Pygame - https://www.pygame.org/docs/
+2. Documentatia oficiala Python - https://docs.python.org/3/
+3. Nystrom, R. - *Game Programming Patterns*, https://gameprogrammingpatterns.com/
+
+---
+
+**Status document:** final tehnic (pentru prezentare universitara)  
+**Ultima actualizare:** Aprilie 2026  
+**Versiune document:** 1.3.0
