@@ -1,5 +1,5 @@
 {
-  "deaths": 1113,
+  "deaths": 1114,
   "completed": {
     "0_0": true,
     "0_1": true,
@@ -69,9 +69,9 @@
       2
     ]
   },
-  "muted": true,
+  "muted": false,
   "level_deaths": {
-    "0_0": 8,
+    "0_0": 9,
     "1_0": 5,
     "3_0": 2,
     "4_0": 1,
